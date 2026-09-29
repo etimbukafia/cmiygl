@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
 
-from env_bootstrap import load_repo_env
+from .env_bootstrap import load_repo_env
 
 from .core.schemas import NavigationMode
 

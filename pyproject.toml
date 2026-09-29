@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cmiygl"
+version = "0.1.0"
+description = "Voice-first navigation assistant for callers who are lost"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "real-time-voice-pipeline @ git+https://github.com/etimbukafia/real-time-voice-pipeline-python.git@cedffecb7e4ed33e52c6d3f05d85bf8cbb4ea827",
+  "pydantic>=2.8",
+  "python-dotenv>=1.0.1",
+  "requests>=2.31",
+  "websockets>=13.0",
+]
+
+[tool.setuptools]
+packages = [
+  "cmiygl",
+  "cmiygl.core",
+  "cmiygl.mapService",
+  "cmiygl.mapService.locationRecoveryService",
+  "cmiygl.mapService.nominatimService",
+  "cmiygl.mapService.overpassService",
+  "cmiygl.mapService.valhallaService",
+  "cmiygl.realtime",
+]
+
+[tool.setuptools.package-dir]
+cmiygl = "."
+"cmiygl.core" = "core"
+"cmiygl.mapService" = "mapService"
+"cmiygl.mapService.locationRecoveryService" = "mapService/locationRecoveryService"
+"cmiygl.mapService.nominatimService" = "mapService/nominatimService"
+"cmiygl.mapService.overpassService" = "mapService/overpassService"
+"cmiygl.mapService.valhallaService" = "mapService/valhallaService"
+"cmiygl.realtime" = "realtime"

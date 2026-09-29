@@ -8,7 +8,7 @@ from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from decimal import Decimal
 
-from tts.tts import Engine, Request
+from harness.tts import Engine, Request
 
 from ..core.schemas import ClarificationKind
 from .events import (

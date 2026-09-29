@@ -2,15 +2,15 @@ from __future__ import annotations
 
 import unittest
 
-from app.cmiygl.mapService.mapModel import RouteStep
-from app.cmiygl.mapService.tool_registry import (
+from cmiygl.mapService.mapModel import RouteStep
+from cmiygl.mapService.tool_registry import (
     RankedPlaceCandidate,
     RankedRecoveredLocationCandidate,
     RoutePlan,
 )
-from app.cmiygl.realtime.navigation_agent import NavigationAgent
-from app.cmiygl.realtime.orchestrator import CmiyglSessionOrchestrator
-from app.cmiygl.realtime.session import build_session_record
+from cmiygl.realtime.navigation_agent import NavigationAgent
+from cmiygl.realtime.orchestrator import CmiyglSessionOrchestrator
+from cmiygl.realtime.session import build_session_record
 
 
 class FakeMapTools:

@@ -4,7 +4,7 @@ import os
 import unittest
 from unittest.mock import patch
 
-from app.cmiygl.config import (
+from cmiygl.config import (
     AppSettings,
     CmiyglConfig,
     LLMProvider,
@@ -17,7 +17,7 @@ from app.cmiygl.config import (
     TTSSettings,
     TwilioSettings,
 )
-from app.cmiygl.core.schemas import NavigationMode
+from cmiygl.core.schemas import NavigationMode
 
 from .mapModel import (
     LandmarkResult,

@@ -13,10 +13,10 @@ import websockets
 from websockets.datastructures import Headers
 from websockets.http11 import Request, Response
 
-from env_bootstrap import load_repo_env
-from stt import AssemblyAIStreamingSTT, DeepgramStreamingSTT, MistralVoxtralSTT
-from tts import CartesiaEngine, FailoverEngine, VoxtralTTSEngine
+from harness.stt import AssemblyAIStreamingSTT, DeepgramStreamingSTT, MistralVoxtralSTT
+from harness.tts import CartesiaEngine, FailoverEngine, VoxtralTTSEngine
 
+from ..env_bootstrap import load_repo_env
 from ..config import CmiyglConfig, STTProvider, TTSProvider, load_cmiygl_config, require_phone_runtime_config
 from ..mapService import build_map_tool_registry
 from .assistant import AssistantTTSConfig

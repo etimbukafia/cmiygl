@@ -5,22 +5,31 @@ Caller speaks by phone, assistant uses map tools to recover current location, co
 
 ## Setup
 
-From the repo root:
+From the repo root, with a Python 3.11+ virtualenv active:
 
 ```powershell
 python -m pip install -e .
 Copy-Item .\.env.example .\.env -ErrorAction SilentlyContinue
-Copy-Item .\app\cmiygl\.env.example .\app\cmiygl\.env -ErrorAction SilentlyContinue
+```
+
+The install pins the shared audio/STT/TTS foundation from
+[`real-time-voice-pipeline-python`](https://github.com/etimbukafia/real-time-voice-pipeline-python).
+CMIYGL keeps its own navigation/session orchestration and Twilio Media Streams adapter.
+
+Run the unit tests from the repo root:
+
+```powershell
+python -m unittest discover -s . -t .. -p "test*.py"
 ```
 
 Phase 0 config check:
 
 ```powershell
-python -m app.cmiygl.realtime
+python -m cmiygl.realtime
 ```
 
 That command now:
-- loads repo `.env` first, then `app/cmiygl/.env`
+- loads the repo `.env` while preserving values already set in the process environment
 - validates `cmiygl` config structure
 - prints readiness for Twilio, STT, LLM, TTS, and maps
 
@@ -92,15 +101,14 @@ Exit criteria:
 - Session lifecycle boots without runtime import/type errors.
 
 Phase 0 baseline command:
-- `python -m app.cmiygl.realtime`
+- `python -m cmiygl.realtime`
 
 Current bootstrap expectation:
-- Run from repository root: `real-time-voice-pipeline/`
+- Install from this repository root (`cmiygl/`) and run the module command above.
 - This is a smoke-test boot path for package/import/session lifecycle validation.
 - Env loading strategy:
-- repo-wide defaults and shared secrets come from `.env`
-- app-specific overrides come from `app/cmiygl/.env`
-- `app.cmiygl.config.load_cmiygl_config()` is the single config entrypoint
+- defaults and shared secrets come from `.env`
+- `cmiygl.config.load_cmiygl_config()` is the single config entrypoint
 - Full Twilio/STT/LLM/TTS runtime wiring remains Phase 3 work.
 
 Current SLO targets:
@@ -138,7 +146,7 @@ Exit criteria:
 - Failures produce actionable fallback prompts (not silent errors).
 
 Phase 1 implementation notes:
-- `app.cmiygl.mapService.tool_registry.build_map_tool_registry()` is the single wiring entrypoint.
+- `cmiygl.mapService.tool_registry.build_map_tool_registry()` is the single wiring entrypoint.
 - `MapToolRegistry.health_check()` performs geocode, nearby-landmark, and route probes.
 - `MapToolError` is the normalized failure surface for map/tool operations.
 - Ranked outputs are compact summaries intended for navigation-agent context, not raw provider payloads.
@@ -169,7 +177,7 @@ Exit criteria:
 - Agent can complete end-to-end flow: locate user -> confirm destination -> generate route -> start navigation.
 
 Phase 2 implementation notes:
-- `app.cmiygl.realtime.navigation_agent.NavigationAgent` is the Phase 2 turn engine.
+- `cmiygl.realtime.navigation_agent.NavigationAgent` is the Phase 2 turn engine.
 - The agent uses deterministic state authority from `SessionRecord` plus a bounded per-turn tool executor.
 - Landmark-only recovery now allows `last_known_location=None`; provider selection still comes from dependency injection in `mapService`.
 - `CmiyglSessionOrchestrator.handle_text_input(...)` is the minimal session-facing entrypoint for text-turn execution ahead of full realtime voice wiring.
@@ -189,17 +197,17 @@ Exit criteria:
 - Natural call interaction loop works with interruption handling and low latency.
 
 Phase 3 implementation notes:
-- `app.cmiygl.realtime.orchestrator.CmiyglSessionOrchestrator` now implements the realtime event-session contract: client event intake, STT streaming, transcript finalization, agent dispatch, text streaming, audio streaming, and lifecycle close/wait.
-- `app.cmiygl.realtime.twilio_media.TwilioMediaAdapter` handles Twilio Media Streams wire conversion in both directions, including built-in mu-law conversion without relying on `audioop`.
-- `app.cmiygl.realtime.server` exposes the Twilio runtime surface:
+- `cmiygl.realtime.orchestrator.CmiyglSessionOrchestrator` implements the realtime event-session contract: client event intake, STT streaming, transcript finalization, agent dispatch, text streaming, audio streaming, and lifecycle close/wait.
+- `cmiygl.realtime.twilio_media.TwilioMediaAdapter` handles Twilio Media Streams wire conversion in both directions, including built-in mu-law conversion without relying on `audioop`.
+- `cmiygl.realtime.server` exposes the Twilio runtime surface:
 - websocket media stream path from `CMIYGL_TWILIO_STREAM_PATH`
 - voice webhook path `/twilio/voice`
 - health path `/health`
-- Browser/dev websocket helpers remain available in `app.cmiygl.realtime.websocket_api`.
+- Browser/dev websocket helpers remain available in `cmiygl.realtime.websocket_api`.
 - Verified scenarios now cover STT->agent->TTS flow, low-confidence fallback, barge-in clear, and Twilio media translation.
 
 Phase 3 runtime command:
-- `python -m app.cmiygl.realtime.server`
+- `python -m cmiygl.realtime.server`
 
 ### Phase 4: Navigation UX and Safety Layer
 

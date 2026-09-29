@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from browser_voice.websocket import (
+from harness.browser_voice.websocket import (
     collect_server_event_payloads as _collect_server_event_payloads,
     serve_event_session,
     serve_managed_event_session,

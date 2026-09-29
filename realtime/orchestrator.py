@@ -7,9 +7,9 @@ from dataclasses import dataclass
 from datetime import datetime
 from uuid import uuid4
 
-from audio.frame import AudioFrame
-from stt.stt import STT
-from tts.tts import Engine
+from harness.audio import AudioFrame
+from harness.stt import STT
+from harness.tts import Engine
 
 from ..core.schemas import (
     AssistantIntent,

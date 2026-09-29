@@ -6,16 +6,16 @@ import json
 import unittest
 from collections.abc import AsyncIterable, AsyncIterator
 
-from audio.frame import AudioFrame
-from stt.stt import STT, Transcript
-from tts.tts import Chunk, Engine, Request
+from harness.audio import AudioFrame
+from harness.stt import STT, Transcript
+from harness.tts import Chunk, Engine, Request
 
-from app.cmiygl.realtime.assistant import AssistantTTSConfig
-from app.cmiygl.realtime.events import AssistantAudioChunkEvent, AssistantAudioClearEvent
-from app.cmiygl.realtime.navigation_agent import NavigationAgent
-from app.cmiygl.realtime.orchestrator import CmiyglSessionOrchestrator
-from app.cmiygl.realtime.test_navigation_agent import FakeMapTools
-from app.cmiygl.realtime.twilio_media import (
+from cmiygl.realtime.assistant import AssistantTTSConfig
+from cmiygl.realtime.events import AssistantAudioChunkEvent, AssistantAudioClearEvent
+from cmiygl.realtime.navigation_agent import NavigationAgent
+from cmiygl.realtime.orchestrator import CmiyglSessionOrchestrator
+from cmiygl.realtime.test_navigation_agent import FakeMapTools
+from cmiygl.realtime.twilio_media import (
     TwilioMediaAdapter,
     TwilioStreamContext,
     render_twiml_stream_response,
@@ -82,7 +82,11 @@ class RealtimePhase3Test(unittest.IsolatedAsyncioTestCase):
             }
         )
         await orchestrator.handle_client_event({"type": "client.audio.end", "session_id": "phase3-session"})
-        await asyncio.sleep(0.12)
+        deadline = asyncio.get_running_loop().time() + 1.0
+        while orchestrator.record.state.value != "needs_confirmation":
+            if asyncio.get_running_loop().time() >= deadline:
+                self.fail(f"assistant did not finish speaking; state={orchestrator.record.state.value!r}")
+            await asyncio.sleep(0.01)
         self.assertEqual(orchestrator.record.state.value, "needs_confirmation")
         await orchestrator.close(reason="test_complete")
         await collector
